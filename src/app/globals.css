@@ -1,26 +1,215 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: 0 0% 98%;
+  --bg-elev: 0 0% 100%;
+  --fg: 240 10% 9%;
+  --fg-muted: 240 5% 40%;
+  --border: 240 6% 90%;
+  --accent: 250 84% 54%;
+  --accent-fg: 0 0% 100%;
+  --highlight: 270 95% 65%;
+  --accent-2: 188 86% 48%;
+  --accent-3: 28 92% 58%;
+  --accent-4: 335 82% 58%;
+  --grid: 240 6% 92%;
+  --background: hsl(var(--bg));
+  --foreground: hsl(var(--fg));
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-bg: hsl(var(--bg));
+  --color-bg-elev: hsl(var(--bg-elev));
+  --color-fg: hsl(var(--fg));
+  --color-fg-muted: hsl(var(--fg-muted));
+  --color-border: hsl(var(--border));
+  --color-accent: hsl(var(--accent));
+  --color-highlight: hsl(var(--highlight));
+  --color-accent-2: hsl(var(--accent-2));
+  --color-accent-3: hsl(var(--accent-3));
+  --color-accent-4: hsl(var(--accent-4));
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --bg: 240 10% 4%;
+  --bg-elev: 240 10% 7%;
+  --fg: 0 0% 98%;
+  --fg-muted: 240 5% 65%;
+  --border: 240 6% 16%;
+  --accent: 265 92% 70%;
+  --accent-fg: 240 10% 4%;
+  --highlight: 190 98% 55%;
+  --accent-2: 154 82% 56%;
+  --accent-3: 35 96% 62%;
+  --accent-4: 330 92% 66%;
+  --grid: 240 8% 12%;
+  --background: hsl(var(--bg));
+  --foreground: hsl(var(--fg));
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(circle at 12% 18%, hsl(var(--accent) / 0.13), transparent 26rem),
+    radial-gradient(circle at 86% 12%, hsl(var(--accent-2) / 0.12), transparent 24rem),
+    radial-gradient(circle at 78% 78%, hsl(var(--accent-4) / 0.1), transparent 26rem),
+    radial-gradient(circle at 18% 86%, hsl(var(--accent-3) / 0.08), transparent 24rem),
+    var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+  background-attachment: fixed;
+}
+
+body::before {
+  pointer-events: none;
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  opacity: 0.035;
+  background-image: radial-gradient(hsl(var(--fg)) 0.65px, transparent 0.65px);
+  background-size: 5px 5px;
+  mix-blend-mode: soft-light;
+}
+
+::selection {
+  background: hsl(var(--highlight) / 0.35);
+}
+
+a,
+button,
+input,
+textarea {
+  outline-color: hsl(var(--accent));
+}
+
+.hover-magnify {
+  transform-origin: center;
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.hover-magnify:hover {
+  transform: scale(1.035);
+}
+
+.hover-magnify-sm {
+  transform-origin: center;
+  transition:
+    transform 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.hover-magnify-sm:hover {
+  transform: scale(1.06);
+}
+
+@media (hover: hover) {
+  a,
+  button {
+    transform-origin: center;
+    transition:
+      transform 160ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 160ms ease,
+      background-color 160ms ease,
+      color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  a:hover,
+  button:hover {
+    transform: scale(1.04);
+  }
+}
+
+.grid-field {
+  background-image:
+    linear-gradient(hsl(var(--grid) / 0.75) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--grid) / 0.75) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.hero-field {
+  background:
+    radial-gradient(circle at 72% 34%, hsl(var(--accent) / 0.12), transparent 24rem),
+    radial-gradient(circle at 88% 64%, hsl(var(--highlight) / 0.08), transparent 22rem),
+    linear-gradient(hsl(var(--grid) / 0.58) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--grid) / 0.58) 1px, transparent 1px),
+    hsl(var(--bg));
+  background-size: auto, auto, 64px 64px, 64px 64px, auto;
+}
+
+.dark .hero-field {
+  background:
+    radial-gradient(circle at 74% 34%, hsl(var(--accent) / 0.16), transparent 25rem),
+    radial-gradient(circle at 88% 68%, hsl(var(--highlight) / 0.1), transparent 24rem),
+    linear-gradient(hsl(var(--grid) / 0.62) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--grid) / 0.62) 1px, transparent 1px),
+    hsl(var(--bg));
+}
+
+.dark .hover-magnify:hover,
+.dark .hover-magnify-sm:hover {
+  box-shadow:
+    0 0 0 1px hsl(var(--accent) / 0.16),
+    0 18px 60px hsl(var(--accent-2) / 0.12),
+    0 8px 32px hsl(var(--accent-4) / 0.08);
+}
+
+.mask-fade {
+  mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 34s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .hover-magnify:hover,
+  .hover-magnify-sm:hover,
+  a:hover,
+  button:hover {
+    transform: none;
+  }
 }

@@ -1,0 +1,60 @@
+export const experience = [
+  {
+    role: "Senior Software Engineer",
+    company: "Bajaj Finserv Limited",
+    location: "Pune, India",
+    period: "Jan 2025 – Jun 2025",
+    bullets: [
+      "Designed multiple businesses inside a B2B app for 5,000+ dealers and off-role employees across 8 verticals.",
+      "Architected a new login structure aligned with InfoSec guidelines; rolled out to 80K+ users with zero downtime.",
+      "Engineered .NET RESTful APIs across 5+ business modules, handling 1M+ hits/day.",
+      "Led integration and benchmarking for 2x–3x peak-season traffic spikes (1× Heroes Award, 2× Kudos).",
+      "Integrated LLM-assisted workflows (Copilot, Claude, Gemini) for prototyping and context-aware debugging.",
+    ],
+    tags: [".NET", "Architecture", "Security", "B2B"],
+  },
+  {
+    role: "Software Engineer",
+    company: "Bajaj Finserv Limited",
+    location: "Pune, India",
+    period: "Jun 2023 – Dec 2024",
+    bullets: [
+      "Engineered scalable mobile apps supporting 20K+ DAU / 180K+ MAU; cut latency 25%.",
+      "Launched car, tractor, commercial-vehicle, and solar finance lines; peak DAU > 50K.",
+      "Shipped Firebase-based festive themes (Diwali, Christmas) for 20K+ concurrent users; +35% engagement.",
+      "Implemented update / force-update across 100% of business modules; 99.9% uptime.",
+    ],
+    tags: ["Android", "Kotlin", "Flutter", "Firebase"],
+  },
+  {
+    role: "Byte Trainee Technology",
+    company: "Bajaj Finserv Limited",
+    location: "Pune, India",
+    period: "Jan 2023 – Jun 2023",
+    bullets: [
+      "Deployed UIDAI biometric & face-auth e-KYC pipelines; 90% accuracy across 100K+ customers.",
+      "Optimized B2B workflows for 25K+ users; cut secure approval time 30%.",
+      "DevTalk 2.0 — 2nd Runner-Up, presented to Bajaj CXOs.",
+    ],
+    tags: ["e-KYC", "Biometrics", "Security"],
+  },
+  {
+    role: "Software Development Intern",
+    company: "Bunkerfit · Spectacom Global",
+    location: "Remote",
+    period: "Sep 2021 – Nov 2021",
+    bullets: [
+      "Integrated OAuth 2.0 PoC.",
+      "Migrated Android app to Flutter; +30% UI performance.",
+    ],
+    tags: ["Flutter", "OAuth"],
+  },
+  {
+    role: "Flutter Developer Intern",
+    company: "Incend Digital",
+    location: "Remote",
+    period: "Jul 2021 – Aug 2021",
+    bullets: ["Built widgets and screens for Pupl.io children's mental wellness platform."],
+    tags: ["Flutter"],
+  },
+] as const;
