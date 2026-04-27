@@ -43,21 +43,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const contactEmail = process.env.CONTACT_EMAIL ?? "prakhar.nagpal@u.nus.edu";
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const contactEmail = process.env.CONTACT_EMAIL?.trim() ?? "prakhar.nagpal@u.nus.edu";
 
   if (!apiKey) {
     return NextResponse.json({ error: "Email is not configured" }, { status: 503 });
   }
 
   const resend = new Resend(apiKey);
-  await resend.emails.send({
-    from: "Portfolio <onboarding@resend.dev>",
+  const { error } = await resend.emails.send({
+    from: "onboarding@resend.dev",
     to: contactEmail,
     replyTo: parsed.data.email,
     subject: `Portfolio message from ${parsed.data.name}`,
-    text: parsed.data.message,
+    html: `<p>${parsed.data.message.replaceAll("\n", "<br />")}</p>`,
   });
+
+  if (error) {
+    console.error("Resend error", error);
+    return NextResponse.json({ error: "Email failed" }, { status: 502 });
+  }
 
   return NextResponse.json({ ok: true });
 }
