@@ -7,8 +7,11 @@ import { Hero } from "@/components/sections/Hero";
 import { Marquee } from "@/components/sections/Marquee";
 import { Projects } from "@/components/sections/Projects";
 import { Skills } from "@/components/sections/Skills";
+import { getPortfolioData } from "@/server/portfolio";
 
-export default function Home() {
+export default async function Home() {
+  const portfolio = await getPortfolioData();
+
   return (
     <div className="min-h-screen bg-bg text-fg">
       <a
@@ -21,11 +24,11 @@ export default function Home() {
       <main>
         <Hero />
         <Marquee />
-        <About />
-        <Experience />
-        <Projects />
-        <Skills />
-        <Contact />
+        <About profile={portfolio.profile} />
+        <Experience experience={portfolio.experience} />
+        <Projects projects={portfolio.projects} />
+        <Skills skills={portfolio.skills} />
+        <Contact profile={portfolio.profile} />
       </main>
       <Footer />
     </div>

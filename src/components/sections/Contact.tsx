@@ -8,7 +8,7 @@ import { z } from "zod";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { profile } from "@/data/profile";
+import type { Profile } from "@/types/portfolio";
 
 const schema = z.object({
   name: z.string().min(2, "Please enter your name."),
@@ -19,7 +19,11 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export function Contact() {
+type ContactProps = {
+  profile: Profile;
+};
+
+export function Contact({ profile }: ContactProps) {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const {
     register,

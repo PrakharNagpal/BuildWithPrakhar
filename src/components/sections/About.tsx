@@ -1,8 +1,12 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { profile } from "@/data/profile";
+import type { Profile } from "@/types/portfolio";
 
-export function About() {
+type AboutProps = {
+  profile: Profile;
+};
+
+export function About({ profile }: AboutProps) {
   return (
     <section id="about" className="mx-auto max-w-6xl px-6 py-24 md:px-10 md:py-32">
       <Reveal>

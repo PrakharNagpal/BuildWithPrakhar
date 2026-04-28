@@ -1,8 +1,12 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { skills } from "@/data/skills";
+import type { SkillGroup } from "@/types/portfolio";
 
-export function Skills() {
+type SkillsProps = {
+  skills: SkillGroup[];
+};
+
+export function Skills({ skills }: SkillsProps) {
   return (
     <section id="skills" className="border-y border-border bg-bg-elev/40 py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6 md:px-10">

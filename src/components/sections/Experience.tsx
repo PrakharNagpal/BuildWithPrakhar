@@ -4,7 +4,7 @@ import { useState } from "react";
 import { DetailModal, type DetailModalContent, OpenHint } from "@/components/ui/DetailModal";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { experience } from "@/data/experience";
+import type { ExperienceItem } from "@/types/portfolio";
 
 const experienceStories = [
   {
@@ -172,7 +172,11 @@ const experienceDetails: DetailModalContent[] = [
   },
 ];
 
-export function Experience() {
+type ExperienceProps = {
+  experience: ExperienceItem[];
+};
+
+export function Experience({ experience }: ExperienceProps) {
   const [selected, setSelected] = useState<DetailModalContent | null>(null);
 
   return (
@@ -195,11 +199,11 @@ export function Experience() {
                   <div
                     role="button"
                     tabIndex={0}
-                    onClick={() => setSelected(experienceDetails[index])}
+                    onClick={() => setSelected(experienceDetails[index] ?? null)}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault();
-                        setSelected(experienceDetails[index]);
+                        setSelected(experienceDetails[index] ?? null);
                       }
                     }}
                     className="hover-magnify cursor-pointer rounded-lg border border-border bg-bg p-6 shadow-xl shadow-black/5 hover:border-accent"
@@ -215,18 +219,18 @@ export function Experience() {
                     <div className="mt-6 grid gap-4 sm:grid-cols-[0.75fr_1fr]">
                       <div className="hover-magnify-sm rounded-lg border border-border bg-bg-elev p-4 hover:border-accent">
                         <p className="text-3xl font-semibold tracking-tight text-fg">
-                          {experienceStories[index].metric}
+                          {(experienceStories[index] ?? experienceStories[0]).metric}
                         </p>
                         <p className="mt-2 text-xs uppercase tracking-[0.18em] text-fg-muted">
-                          {experienceStories[index].metricLabel}
+                          {(experienceStories[index] ?? experienceStories[0]).metricLabel}
                         </p>
                       </div>
                       <div className="space-y-3">
                         <p className="text-sm leading-6 text-fg">
-                          {experienceStories[index].mission}
+                          {(experienceStories[index] ?? experienceStories[0]).mission}
                         </p>
                         <p className="text-sm leading-6 text-fg-muted">
-                          {experienceStories[index].proof}
+                          {(experienceStories[index] ?? experienceStories[0]).proof}
                         </p>
                       </div>
                     </div>
