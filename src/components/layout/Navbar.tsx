@@ -42,7 +42,7 @@ export function Navbar() {
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <a
-            href="resume.pdf"
+            href="/resume"
             className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-bg-elev/80 px-4 text-sm font-medium text-fg transition hover:border-accent hover:text-accent"
           >
             <FileText size={16} />

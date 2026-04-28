@@ -300,6 +300,13 @@ export function AdminDashboard({ initialData }: { initialData: AdminPortfolioDat
               <Field label="LinkedIn" value={data.profile.linkedin} onChange={(value) => updateProfile("linkedin", value)} />
               <Field label="GitHub" value={data.profile.github} onChange={(value) => updateProfile("github", value)} />
               <div className="md:col-span-2">
+                <Field
+                  label="Resume Google Drive URL"
+                  value={data.profile.resumeUrl ?? ""}
+                  onChange={(value) => updateProfile("resumeUrl", value)}
+                />
+              </div>
+              <div className="md:col-span-2">
                 <Field label="Tagline" value={data.profile.tagline} onChange={(value) => updateProfile("tagline", value)} />
               </div>
               <div className="md:col-span-2">

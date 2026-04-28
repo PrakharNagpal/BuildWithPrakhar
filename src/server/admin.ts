@@ -13,6 +13,7 @@ const profileSchema = z.object({
   phone: z.string().trim().min(1),
   linkedin: z.string().trim().url(),
   github: z.string().trim().url(),
+  resumeUrl: z.string().trim().url().or(z.literal("")).nullable().optional(),
   tagline: z.string().trim().min(1),
   about: stringList,
   stats: z.array(z.object({
@@ -64,7 +65,9 @@ export const adminPortfolioSchema = z.object({
 export type AdminPortfolioData = z.infer<typeof adminPortfolioSchema>;
 
 type RowId = { id: string };
-type ProfileRow = AdminPortfolioData["profile"] & RowId;
+type ProfileRow = AdminPortfolioData["profile"] & RowId & {
+  resume_url?: string | null;
+};
 type ProjectRow = AdminPortfolioData["projects"][number] & RowId & { sort_order: number };
 type ExperienceRow = AdminPortfolioData["experience"][number] & RowId & { sort_order: number };
 type SkillRow = Omit<AdminPortfolioData["skills"][number], "group"> & RowId & {
@@ -122,8 +125,13 @@ export async function getAdminPortfolioData(): Promise<AdminPortfolioData> {
     throw new Error("No profile row exists");
   }
 
+  const { resume_url: resumeUrlFromDb, ...profileFields } = profile;
+
   return {
-    profile,
+    profile: {
+      ...profileFields,
+      resumeUrl: profile.resumeUrl ?? resumeUrlFromDb ?? "",
+    },
     projects: projects.map((project) => ({
       ...stripSortOrder(project),
       images: project.images ?? [],
@@ -178,16 +186,21 @@ export async function updateAdminPortfolioData(input: unknown) {
   requireServiceRole();
   const data = adminPortfolioSchema.parse(input);
   const { id: profileId, ...profile } = data.profile;
+  const { resumeUrl, ...profileFields } = profile;
+  const profilePayload = {
+    ...profileFields,
+    resume_url: normalizeOptionalUrl(resumeUrl),
+  };
 
   if (profileId) {
-    await supabaseMutation("profile", profile, {
+    await supabaseMutation("profile", profilePayload, {
       method: "PATCH",
       query: `id=eq.${profileId}`,
       serviceRole: true,
       returning: "minimal",
     });
   } else {
-    await supabaseMutation("profile", profile, { method: "POST", serviceRole: true, returning: "minimal" });
+    await supabaseMutation("profile", profilePayload, { method: "POST", serviceRole: true, returning: "minimal" });
   }
 
   await syncRows("projects", data.projects, (row, index) => {

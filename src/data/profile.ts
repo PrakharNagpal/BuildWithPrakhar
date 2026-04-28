@@ -6,6 +6,7 @@ export const profile = {
   phone: "+65 94467059",
   linkedin: "https://linkedin.com/in/prakhar-nagpal",
   github: "https://github.com/PrakharNagpal",
+  resumeUrl: "",
   tagline:
     "I architect secure platforms, engineer high-throughput APIs, and ship AI-driven products that turn complex systems into fast, reliable user experiences.",
   about: [

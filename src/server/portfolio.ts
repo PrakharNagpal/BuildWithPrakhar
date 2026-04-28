@@ -22,6 +22,8 @@ type ProfileRow = {
   phone: string;
   linkedin: string;
   github: string;
+  resumeUrl?: string | null;
+  resume_url?: string | null;
   tagline: string;
   about: string[];
   stats: Profile["stats"];
@@ -57,7 +59,16 @@ export async function getProfile(): Promise<Profile> {
     const rows = await supabaseSelect<ProfileRow[]>("profile", {
       query: "select=*&limit=1",
     });
-    return rows[0] ?? fallbackData.profile;
+    const profile = rows[0];
+
+    if (!profile) {
+      return fallbackData.profile;
+    }
+
+    return {
+      ...profile,
+      resumeUrl: profile.resumeUrl ?? profile.resume_url ?? null,
+    };
   } catch (error) {
     console.error(error);
     return fallbackData.profile;

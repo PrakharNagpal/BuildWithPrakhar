@@ -11,6 +11,7 @@ export type Profile = {
   phone: string;
   linkedin: string;
   github: string;
+  resumeUrl?: string | null;
   tagline: string;
   about: string[];
   stats: ProfileStat[];
