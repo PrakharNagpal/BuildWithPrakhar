@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://prakharnagpal.com"),
+  metadataBase: new URL("https://buildwithprakhar.app"),
   title: "Prakhar Nagpal — Software Engineer",
   description:
     "Master of Computing @ NUS. ex-Senior SWE @ Bajaj Finserv. I build scalable, secure systems.",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     title: "Prakhar Nagpal — Software Engineer",
     description:
       "Scalable systems, applied AI, secure platforms, and polished engineering craft.",
-    url: "https://prakharnagpal.com",
+    url: "https://buildwithprakhar.app",
     siteName: "Prakhar Nagpal",
     images: ["/og-image.png"],
   },

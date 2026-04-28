@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://prakharnagpal.com/sitemap.xml",
+    sitemap: "https://buildwithprakhar.app/sitemap.xml",
   };
 }
