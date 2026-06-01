@@ -1,18 +1,27 @@
 @import "tailwindcss";
 
+/*
+  Design system — "Cool slate + electric indigo"
+  Cohesive palette: ink/paper base, one electric-indigo accent, one warm-amber spark,
+  plus two muted slate-blues for support. No rainbow blobs.
+*/
+
 :root {
-  --bg: 0 0% 98%;
+  --bg: 220 24% 98%;
   --bg-elev: 0 0% 100%;
-  --fg: 240 10% 9%;
-  --fg-muted: 240 5% 40%;
-  --border: 240 6% 90%;
-  --accent: 250 84% 54%;
+  --fg: 222 47% 8%;
+  --fg-muted: 222 12% 42%;
+  --border: 222 16% 90%;
+  --accent: 243 82% 58%;
   --accent-fg: 0 0% 100%;
-  --highlight: 270 95% 65%;
-  --accent-2: 188 86% 48%;
-  --accent-3: 28 92% 58%;
-  --accent-4: 335 82% 58%;
-  --grid: 240 6% 92%;
+  --highlight: 230 90% 64%;
+  --spark: 36 96% 50%;
+  /* legacy aliases kept harmonious so existing components stay cohesive */
+  --accent-2: 36 96% 50%;
+  --accent-3: 222 40% 50%;
+  --accent-4: 250 60% 60%;
+  --grid: 222 16% 91%;
+  --shadow-color: 222 47% 18%;
   --background: hsl(var(--bg));
   --foreground: hsl(var(--fg));
 }
@@ -27,6 +36,7 @@
   --color-border: hsl(var(--border));
   --color-accent: hsl(var(--accent));
   --color-highlight: hsl(var(--highlight));
+  --color-spark: hsl(var(--spark));
   --color-accent-2: hsl(var(--accent-2));
   --color-accent-3: hsl(var(--accent-3));
   --color-accent-4: hsl(var(--accent-4));
@@ -35,18 +45,20 @@
 }
 
 .dark {
-  --bg: 240 10% 4%;
-  --bg-elev: 240 10% 7%;
-  --fg: 0 0% 98%;
-  --fg-muted: 240 5% 65%;
-  --border: 240 6% 16%;
-  --accent: 265 92% 70%;
-  --accent-fg: 240 10% 4%;
-  --highlight: 190 98% 55%;
-  --accent-2: 154 82% 56%;
-  --accent-3: 35 96% 62%;
-  --accent-4: 330 92% 66%;
-  --grid: 240 8% 12%;
+  --bg: 222 32% 5%;
+  --bg-elev: 222 24% 9%;
+  --fg: 220 22% 96%;
+  --fg-muted: 220 12% 62%;
+  --border: 222 18% 16%;
+  --accent: 245 92% 70%;
+  --accent-fg: 222 32% 5%;
+  --highlight: 228 96% 72%;
+  --spark: 38 96% 60%;
+  --accent-2: 38 96% 60%;
+  --accent-3: 220 30% 62%;
+  --accent-4: 250 80% 72%;
+  --grid: 222 20% 13%;
+  --shadow-color: 245 80% 4%;
   --background: hsl(var(--bg));
   --foreground: hsl(var(--fg));
 }
@@ -61,10 +73,7 @@ html {
 
 body {
   background:
-    radial-gradient(circle at 12% 18%, hsl(var(--accent) / 0.13), transparent 26rem),
-    radial-gradient(circle at 86% 12%, hsl(var(--accent-2) / 0.12), transparent 24rem),
-    radial-gradient(circle at 78% 78%, hsl(var(--accent-4) / 0.1), transparent 26rem),
-    radial-gradient(circle at 18% 86%, hsl(var(--accent-3) / 0.08), transparent 24rem),
+    radial-gradient(ellipse 60% 50% at 50% -10%, hsl(var(--accent) / 0.1), transparent 70%),
     var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
@@ -72,20 +81,34 @@ body {
   background-attachment: fixed;
 }
 
+.dark body {
+  background:
+    radial-gradient(ellipse 55% 45% at 50% -8%, hsl(var(--accent) / 0.16), transparent 70%),
+    radial-gradient(ellipse 40% 40% at 85% 8%, hsl(var(--highlight) / 0.08), transparent 70%),
+    var(--background);
+}
+
+/* Fine film grain — the texture real designers add, kills the flat "generated" look */
 body::before {
   pointer-events: none;
   content: "";
   position: fixed;
   inset: 0;
   z-index: 50;
-  opacity: 0.035;
-  background-image: radial-gradient(hsl(var(--fg)) 0.65px, transparent 0.65px);
-  background-size: 5px 5px;
+  opacity: 0.04;
+  background-image: radial-gradient(hsl(var(--fg)) 0.6px, transparent 0.6px);
+  background-size: 4px 4px;
   mix-blend-mode: soft-light;
 }
 
+.dark body::before {
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+}
+
 ::selection {
-  background: hsl(var(--highlight) / 0.35);
+  background: hsl(var(--accent) / 0.28);
+  color: hsl(var(--fg));
 }
 
 a,
@@ -95,18 +118,45 @@ textarea {
   outline-color: hsl(var(--accent));
 }
 
+/* Reusable surface depth — soft, layered shadows instead of flat borders */
+.surface {
+  box-shadow:
+    0 1px 1px hsl(var(--shadow-color) / 0.04),
+    0 4px 12px hsl(var(--shadow-color) / 0.05),
+    0 16px 40px hsl(var(--shadow-color) / 0.05);
+}
+
+.dark .surface {
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.04),
+    0 8px 30px hsl(0 0% 0% / 0.4),
+    0 2px 8px hsl(0 0% 0% / 0.3);
+}
+
+/* Gradient hairline used on headings / accents */
+.text-gradient {
+  background: linear-gradient(120deg, hsl(var(--fg)), hsl(var(--accent)) 70%, hsl(var(--highlight)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .hover-magnify {
   transform-origin: center;
   transition:
-    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 180ms ease,
-    background-color 180ms ease,
-    color 180ms ease,
-    box-shadow 180ms ease;
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms ease,
+    background-color 220ms ease,
+    color 220ms ease,
+    box-shadow 220ms ease;
 }
 
 .hover-magnify:hover {
-  transform: scale(1.035);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow:
+    0 1px 1px hsl(var(--shadow-color) / 0.04),
+    0 8px 24px hsl(var(--accent) / 0.1),
+    0 24px 60px hsl(var(--shadow-color) / 0.06);
 }
 
 .hover-magnify-sm {
@@ -142,40 +192,49 @@ textarea {
 
 .grid-field {
   background-image:
-    linear-gradient(hsl(var(--grid) / 0.75) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--grid) / 0.75) 1px, transparent 1px);
+    linear-gradient(hsl(var(--grid) / 0.7) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--grid) / 0.7) 1px, transparent 1px);
   background-size: 56px 56px;
 }
 
+/* Hero backdrop — perspective grid that fades into the distance for real depth */
 .hero-field {
+  position: relative;
   background:
-    radial-gradient(circle at 72% 34%, hsl(var(--accent) / 0.12), transparent 24rem),
-    radial-gradient(circle at 88% 64%, hsl(var(--highlight) / 0.08), transparent 22rem),
-    linear-gradient(hsl(var(--grid) / 0.58) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--grid) / 0.58) 1px, transparent 1px),
+    radial-gradient(ellipse 50% 45% at 70% 40%, hsl(var(--accent) / 0.1), transparent 70%),
     hsl(var(--bg));
-  background-size: auto, auto, 64px 64px, 64px 64px, auto;
+}
+
+.hero-field::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(hsl(var(--grid) / 0.6) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--grid) / 0.6) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 35%, black 10%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 35%, black 10%, transparent 75%);
 }
 
 .dark .hero-field {
   background:
-    radial-gradient(circle at 74% 34%, hsl(var(--accent) / 0.16), transparent 25rem),
-    radial-gradient(circle at 88% 68%, hsl(var(--highlight) / 0.1), transparent 24rem),
-    linear-gradient(hsl(var(--grid) / 0.62) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--grid) / 0.62) 1px, transparent 1px),
+    radial-gradient(ellipse 50% 45% at 70% 40%, hsl(var(--accent) / 0.16), transparent 70%),
+    radial-gradient(ellipse 40% 40% at 78% 70%, hsl(var(--highlight) / 0.1), transparent 70%),
     hsl(var(--bg));
 }
 
-.dark .hover-magnify:hover,
-.dark .hover-magnify-sm:hover {
-  box-shadow:
-    0 0 0 1px hsl(var(--accent) / 0.16),
-    0 18px 60px hsl(var(--accent-2) / 0.12),
-    0 8px 32px hsl(var(--accent-4) / 0.08);
+.dark .hero-field::after {
+  background-image:
+    linear-gradient(hsl(var(--grid) / 0.7) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--grid) / 0.7) 1px, transparent 1px);
+  background-size: 60px 60px;
 }
 
 .mask-fade {
   mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
 }
 
 @keyframes marquee {

@@ -1,6 +1,8 @@
 "use client";
 
 import Lenis from "@studio-freight/lenis";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect } from "react";
 
 export function SmoothScroll() {
@@ -9,23 +11,29 @@ export function SmoothScroll() {
       return;
     }
 
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Weighted, gliding scroll — the "expensive" Apple feel comes from a longer
+    // duration + exponential ease, not the snappy 0.28 we had before.
     const lenis = new Lenis({
-      duration: 0.28,
-      easing: (t) => 1 - Math.pow(1 - t, 2),
-      wheelMultiplier: 2.1,
-      touchMultiplier: 1.65,
+      duration: 1.15,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      wheelMultiplier: 1,
+      touchMultiplier: 1.6,
     });
 
-    let frame = 0;
+    // Drive ScrollTrigger from Lenis so pinned/scrubbed sections stay in sync.
+    lenis.on("scroll", ScrollTrigger.update);
+
     const raf = (time: number) => {
-      lenis.raf(time);
-      frame = requestAnimationFrame(raf);
+      lenis.raf(time * 1000); // gsap ticker is in seconds, Lenis wants ms
     };
 
-    frame = requestAnimationFrame(raf);
+    gsap.ticker.add(raf);
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
-      cancelAnimationFrame(frame);
+      gsap.ticker.remove(raf);
       lenis.destroy();
     };
   }, []);

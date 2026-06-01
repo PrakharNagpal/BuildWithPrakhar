@@ -1,5 +1,6 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { TiltCard } from "@/components/ui/TiltCard";
 import type { SkillGroup } from "@/types/portfolio";
 
 type SkillsProps = {
@@ -20,7 +21,7 @@ export function Skills({ skills }: SkillsProps) {
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {skills.map((group, index) => (
             <Reveal key={group.group} delay={index * 0.05}>
-              <div className="hover-magnify h-full rounded-lg border border-border bg-bg p-6 hover:border-accent">
+              <TiltCard className="surface h-full">
                 <h3 className="text-lg font-semibold text-fg">{group.group}</h3>
                 <div className="mt-5 flex flex-wrap gap-2">
                   {group.items.map((skill) => (
@@ -29,7 +30,7 @@ export function Skills({ skills }: SkillsProps) {
                     </span>
                   ))}
                 </div>
-              </div>
+              </TiltCard>
             </Reveal>
           ))}
         </div>

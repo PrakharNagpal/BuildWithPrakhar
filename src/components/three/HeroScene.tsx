@@ -1,16 +1,18 @@
 "use client";
 
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
-import { Float, OrbitControls, RoundedBox, Stars } from "@react-three/drei";
+import { Environment, Float, Lightformer, OrbitControls, RoundedBox, Stars } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import type { Group } from "three";
 
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
 function cssHsl(variable: string) {
-  if (typeof window === "undefined") return "#8b5cf6";
+  if (typeof window === "undefined") return "#6366f1";
   const value = getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
-  return value ? `hsl(${value})` : "#8b5cf6";
+  return value ? `hsl(${value})` : "#6366f1";
 }
 
 function Robot() {
@@ -19,23 +21,26 @@ function Robot() {
   const rightArmRef = useRef<Group>(null);
   const antennaRef = useRef<Group>(null);
   const { resolvedTheme } = useTheme();
-  const [accent, setAccent] = useState("#a78bfa");
-  const [highlight, setHighlight] = useState("#22d3ee");
+  const [accent, setAccent] = useState("#6366f1");
+  const [highlight, setHighlight] = useState("#5b7cff");
+  const [spark, setSpark] = useState("#f59e0b");
 
   useEffect(() => {
     const id = window.setTimeout(() => {
       setAccent(cssHsl("--accent"));
       setHighlight(cssHsl("--highlight"));
+      setSpark(cssHsl("--spark"));
     }, 0);
     return () => window.clearTimeout(id);
   }, [resolvedTheme]);
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock }, delta) => {
     const time = clock.getElapsedTime();
+    const damp = Math.min(1, delta * 4);
 
     if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(time * 0.45) * 0.18;
-      groupRef.current.position.y = Math.sin(time * 0.9) * 0.08;
+      // Gentle breathing float. Rotation is handled by OrbitControls (drag + auto-rotate).
+      groupRef.current.position.y = lerp(groupRef.current.position.y, Math.sin(time * 0.9) * 0.08, damp);
     }
 
     if (leftArmRef.current) {
@@ -52,8 +57,8 @@ function Robot() {
   });
 
   return (
-    <Float speed={1.15} rotationIntensity={0.35} floatIntensity={0.9}>
-      <group ref={groupRef} scale={1.08} position={[0, -0.08, 0]}>
+    <Float speed={1.1} rotationIntensity={0.12} floatIntensity={0.7}>
+      <group ref={groupRef} scale={1.0} position={[0, -0.08, 0]}>
         <group position={[0, 1.05, 0]}>
           <RoundedBox args={[1.55, 1.08, 0.78]} radius={0.16} smoothness={8}>
             <meshStandardMaterial color={accent} metalness={0.62} roughness={0.2} />
@@ -63,11 +68,11 @@ function Robot() {
           </RoundedBox>
           <mesh position={[-0.32, 0.1, 0.46]}>
             <sphereGeometry args={[0.08, 24, 24]} />
-            <meshStandardMaterial color={highlight} emissive={highlight} emissiveIntensity={1.9} />
+            <meshStandardMaterial color={spark} emissive={spark} emissiveIntensity={2.1} />
           </mesh>
           <mesh position={[0.32, 0.1, 0.46]}>
             <sphereGeometry args={[0.08, 24, 24]} />
-            <meshStandardMaterial color={highlight} emissive={highlight} emissiveIntensity={1.9} />
+            <meshStandardMaterial color={spark} emissive={spark} emissiveIntensity={2.1} />
           </mesh>
           <group ref={antennaRef} position={[0, 0.64, 0]}>
             <mesh position={[0, 0.22, 0]}>
@@ -140,6 +145,7 @@ function Robot() {
 
 export function HeroScene() {
   const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
 
   return (
     <Canvas
@@ -149,17 +155,38 @@ export function HeroScene() {
       gl={{ antialias: true, alpha: true }}
       className="h-full w-full"
     >
-      <ambientLight intensity={0.42} />
-      <directionalLight position={[5, 5, 5]} intensity={1.15} />
-      <pointLight position={[-3, -2, 4]} intensity={1.25} color="#22d3ee" />
-      <Stars radius={45} depth={22} count={900} factor={3} fade speed={0.45} />
+      <ambientLight intensity={isDark ? 0.35 : 0.65} />
+      <directionalLight position={[5, 5, 5]} intensity={isDark ? 1.1 : 1.4} />
+      <pointLight position={[-3, -2, 4]} intensity={1.2} color="#5b7cff" />
+      <pointLight position={[3, -1, 2]} intensity={0.8} color="#f59e0b" />
+
+      {/* Procedural studio environment — gives the metal real reflections, no network/HDR fetch */}
+      <Environment resolution={256}>
+        <Lightformer intensity={isDark ? 2.4 : 3.2} position={[0, 3, 2]} scale={[8, 3, 1]} color="#ffffff" />
+        <Lightformer intensity={isDark ? 2.2 : 2.6} position={[-4, 1, 2]} scale={[3, 6, 1]} color="#6366f1" />
+        <Lightformer intensity={isDark ? 1.8 : 2.0} position={[4, -1, 1]} scale={[3, 4, 1]} color="#5b7cff" />
+        <Lightformer intensity={1.4} position={[2, -3, 3]} scale={[4, 2, 1]} color="#f59e0b" />
+      </Environment>
+
+      {isDark ? <Stars radius={45} depth={22} count={700} factor={2.6} fade speed={0.4} /> : null}
       <Robot />
-      <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.45} />
-      {resolvedTheme === "dark" ? (
-        <EffectComposer>
-          <Bloom intensity={0.55} luminanceThreshold={0.24} luminanceSmoothing={0.55} />
-        </EffectComposer>
-      ) : null}
+      <OrbitControls
+        enableZoom={false}
+        enablePan={false}
+        autoRotate
+        autoRotateSpeed={0.9}
+        enableDamping
+        dampingFactor={0.08}
+        rotateSpeed={0.9}
+      />
+      <EffectComposer enableNormalPass={false}>
+        <Bloom
+          intensity={isDark ? 0.7 : 0.35}
+          luminanceThreshold={isDark ? 0.22 : 0.4}
+          luminanceSmoothing={0.6}
+          mipmapBlur
+        />
+      </EffectComposer>
     </Canvas>
   );
 }

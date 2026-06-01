@@ -1,5 +1,6 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { TiltCard } from "@/components/ui/TiltCard";
 import type { Profile } from "@/types/portfolio";
 
 type AboutProps = {
@@ -25,10 +26,10 @@ export function About({ profile }: AboutProps) {
         <div className="grid gap-4 sm:grid-cols-2">
           {profile.stats.map((stat, index) => (
             <Reveal key={stat.value} delay={index * 0.06}>
-              <div className="hover-magnify min-h-36 rounded-lg border border-border bg-bg-elev p-5 hover:border-accent">
-                <p className="text-4xl font-semibold text-fg">{stat.value}</p>
+              <TiltCard className="surface min-h-36">
+                <p className="text-4xl font-semibold text-gradient">{stat.value}</p>
                 <p className="mt-3 text-sm leading-6 text-fg-muted">{stat.label}</p>
-              </div>
+              </TiltCard>
             </Reveal>
           ))}
         </div>

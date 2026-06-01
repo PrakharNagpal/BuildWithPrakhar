@@ -183,12 +183,100 @@ const projectDetails: Record<string, DetailModalContent> = {
   },
 };
 
+function ProjectCard({ project, onOpen }: { project: Project; onOpen: () => void }) {
+  return (
+    <TiltCard
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onOpen();
+        }
+      }}
+      className="surface flex h-full cursor-pointer flex-col"
+    >
+      {project.images?.length ? (
+        <div className="mb-7 grid gap-4 md:grid-cols-[1.05fr_0.95fr]">
+          {project.images.map((image, imageIndex) => (
+            <div
+              key={image}
+              className={`hover-magnify relative overflow-hidden rounded-lg border border-border bg-bg hover:border-accent ${
+                imageIndex === 0 ? "aspect-[16/10]" : "aspect-[16/10] md:translate-y-8"
+              }`}
+            >
+              <Image
+                src={image}
+                alt={`${project.title} screenshot ${imageIndex + 1}`}
+                fill
+                sizes="(min-width: 768px) 520px, 100vw"
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      ) : null}
+      <div className="flex items-start justify-between gap-6">
+        <div>
+          <p className="font-mono text-xs uppercase tracking-[0.22em] text-accent">{project.year} · {project.role}</p>
+          <h3 className="mt-4 text-2xl font-semibold tracking-tight text-fg">{project.title}</h3>
+        </div>
+        {project.demo ? (
+          <a
+            href={project.demo}
+            onClick={(event) => event.stopPropagation()}
+            aria-label={`Open ${project.title} live demo`}
+            className="rounded-full border border-border p-2 text-fg-muted transition hover:border-accent hover:text-accent"
+          >
+            <ArrowUpRight size={20} />
+          </a>
+        ) : (
+          <ArrowUpRight className="shrink-0 text-fg-muted transition group-hover:text-accent" size={22} />
+        )}
+      </div>
+      <p className="mt-5 text-sm leading-7 text-fg-muted md:text-base">{project.blurb}</p>
+      <div className="mt-6 flex flex-wrap gap-2">
+        {project.stack.map((item) => (
+          <span key={item} className="hover-magnify-sm rounded-full border border-border bg-bg/70 px-3 py-1 text-xs text-fg-muted hover:border-accent hover:text-fg">{item}</span>
+        ))}
+      </div>
+      <div className="mt-7 grid gap-3">
+        {(projectSignals[project.slug] ?? project.highlights).map((signal, signalIndex) => (
+          <div key={signal} className="hover-magnify flex items-center gap-3 rounded-lg border border-border bg-bg/55 px-3 py-2 hover:border-accent">
+            <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-[11px] ${signalAccents[signalIndex % signalAccents.length]}`}>
+              0{signalIndex + 1}
+            </span>
+            <span className="text-sm text-fg-muted">{signal}</span>
+          </div>
+        ))}
+      </div>
+      {project.repo || project.demo ? (
+        <div className="mt-6 flex flex-wrap gap-3">
+          {project.demo ? (
+            <a href={project.demo} onClick={(event) => event.stopPropagation()} className="rounded-full border border-accent bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-highlight">
+              Live demo
+            </a>
+          ) : null}
+          {project.repo ? (
+            <a href={project.repo} onClick={(event) => event.stopPropagation()} className="rounded-full border border-border px-4 py-2 text-sm font-medium text-fg transition hover:border-accent hover:text-accent">
+              GitHub
+            </a>
+          ) : null}
+        </div>
+      ) : null}
+      <OpenHint>Open case card</OpenHint>
+    </TiltCard>
+  );
+}
+
 type ProjectsProps = {
   projects: Project[];
 };
 
 export function Projects({ projects }: ProjectsProps) {
   const [selected, setSelected] = useState<DetailModalContent | null>(null);
+  const open = (slug: string) => setSelected(projectDetails[slug] ?? null);
 
   return (
     <section id="projects" className="mx-auto max-w-6xl px-6 py-24 md:px-10 md:py-32">
@@ -199,91 +287,14 @@ export function Projects({ projects }: ProjectsProps) {
           copy="A bento-style overview of the systems and products that best represent my range."
         />
       </Reveal>
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         {projects.map((project, index) => (
-          <Reveal key={project.slug} delay={index * 0.05} className={project.slug === "equal-miles" ? "md:col-span-2" : ""}>
-            <TiltCard
-              role="button"
-              tabIndex={0}
-              onClick={() => setSelected(projectDetails[project.slug] ?? null)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  setSelected(projectDetails[project.slug] ?? null);
-                }
-              }}
-              className={`cursor-pointer ${project.slug === "equal-miles" ? "min-h-[420px]" : project.featured ? "min-h-[360px]" : "min-h-[300px]"}`}
-            >
-              {project.images?.length ? (
-                <div className="mb-7 grid gap-4 md:grid-cols-[1.05fr_0.95fr]">
-                  {project.images.map((image, imageIndex) => (
-                    <div
-                      key={image}
-                      className={`hover-magnify relative overflow-hidden rounded-lg border border-border bg-bg hover:border-accent ${
-                        imageIndex === 0 ? "aspect-[16/10]" : "aspect-[16/10] md:translate-y-8"
-                      }`}
-                    >
-                      <Image
-                        src={image}
-                        alt={`${project.title} screenshot ${imageIndex + 1}`}
-                        fill
-                        sizes="(min-width: 768px) 520px, 100vw"
-                        className="object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-              <div className="flex items-start justify-between gap-6">
-                <div>
-                  <p className="font-mono text-xs uppercase tracking-[0.22em] text-accent">{project.year} · {project.role}</p>
-                  <h3 className="mt-4 text-2xl font-semibold tracking-tight text-fg">{project.title}</h3>
-                </div>
-                {project.demo ? (
-                  <a
-                    href={project.demo}
-                    onClick={(event) => event.stopPropagation()}
-                    aria-label={`Open ${project.title} live demo`}
-                    className="rounded-full border border-border p-2 text-fg-muted transition hover:border-accent hover:text-accent"
-                  >
-                    <ArrowUpRight size={20} />
-                  </a>
-                ) : (
-                  <ArrowUpRight className="shrink-0 text-fg-muted transition group-hover:text-accent" size={22} />
-                )}
-              </div>
-              <p className="mt-5 text-sm leading-7 text-fg-muted md:text-base">{project.blurb}</p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {project.stack.map((item) => (
-                  <span key={item} className="hover-magnify-sm rounded-full border border-border bg-bg/70 px-3 py-1 text-xs text-fg-muted hover:border-accent hover:text-fg">{item}</span>
-                ))}
-              </div>
-              <div className="mt-7 grid gap-3">
-                {(projectSignals[project.slug] ?? project.highlights).map((signal, signalIndex) => (
-                  <div key={signal} className="hover-magnify flex items-center gap-3 rounded-lg border border-border bg-bg/55 px-3 py-2 hover:border-accent">
-                    <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-[11px] ${signalAccents[signalIndex % signalAccents.length]}`}>
-                      0{signalIndex + 1}
-                    </span>
-                    <span className="text-sm text-fg-muted">{signal}</span>
-                  </div>
-                ))}
-              </div>
-              {project.repo || project.demo ? (
-                <div className="mt-6 flex flex-wrap gap-3">
-                  {project.demo ? (
-                    <a href={project.demo} onClick={(event) => event.stopPropagation()} className="rounded-full border border-accent bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-highlight">
-                      Live demo
-                    </a>
-                  ) : null}
-                  {project.repo ? (
-                    <a href={project.repo} onClick={(event) => event.stopPropagation()} className="rounded-full border border-border px-4 py-2 text-sm font-medium text-fg transition hover:border-accent hover:text-accent">
-                      GitHub
-                    </a>
-                  ) : null}
-                </div>
-              ) : null}
-              <OpenHint>Open case card</OpenHint>
-            </TiltCard>
+          <Reveal
+            key={project.slug}
+            delay={index * 0.05}
+            className={project.slug === "equal-miles" ? "md:col-span-2" : ""}
+          >
+            <ProjectCard project={project} onOpen={() => open(project.slug)} />
           </Reveal>
         ))}
       </div>
